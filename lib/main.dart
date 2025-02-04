@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/widgets/shared/filter.dart';
 import "service/location.service.dart";
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -42,22 +44,40 @@ class Weather extends StatelessWidget {
 
   LocationService locationService = LocationService();
 
-
   @override
   Widget build(BuildContext context) {
-    locationService.getAllCountrys()
-      .then((data) {
-        print(data);
-    });
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Weather"),
       ),
-      body: Text("test"),
+      body: FutureBuilder(
+          future: locationService.getAllCountrys(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [CircularProgressIndicator()],
+                  )
+                ],
+              );
+            } else if (snapshot.hasError) {
+              return Text('Erro! ao carregar os estados');
+            } else {
+              List<dynamic> country = [];
+
+              if (snapshot.data is String) {
+                country = jsonDecode(snapshot.data);
+              }
+
+              return Filter(
+                list: country,
+              );
+            }
+          }),
     );
   }
 }
