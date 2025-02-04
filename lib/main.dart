@@ -75,6 +75,7 @@ class Weather extends StatelessWidget {
 
               return Filter(
                 list: country,
+                path: ["name", "common"],
               );
             }
           }),
