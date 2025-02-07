@@ -19,7 +19,7 @@ class _LocationWidget extends State<LocationWidget> {
       case "country":
         return "Selecione um País:";
       default:
-        return "Tipo Indentificado";
+        return "Tipo Mão Indentificado";
     }
   }
 
