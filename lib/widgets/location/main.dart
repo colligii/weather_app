@@ -3,10 +3,52 @@ import '../../service/location.service.dart';
 import 'package:weather_app/widgets/shared/filter.dart';
 import 'dart:convert';
 
-class LocationWidget extends StatelessWidget {
-  const LocationWidget({ super.key });
+class LocationWidget extends StatefulWidget {
+  const LocationWidget({super.key});
 
-  final LocationService locationService = const LocationService();
+  @override
+  State<StatefulWidget> createState() => _LocationWidget();
+}
+
+class _LocationWidget extends State<LocationWidget> {
+  LocationService locationService = const LocationService();
+  String type = "country";
+
+  String getLabel() {
+    switch (type) {
+      case "country":
+        return "Selecione um País:";
+      default:
+        return "Tipo Indentificado";
+    }
+  }
+
+  String getError() {
+    switch (type) {
+      case "country":
+        return "Erro ao carregar os países!";
+      default:
+        return "Erro inesperado!";
+    }
+  }
+
+  List<String> getPathName() {
+    switch (type) {
+      case "country":
+        return ["name", "common"];
+      default:
+        return [];
+    }
+  }
+
+  List<String> getPathId() {
+    switch (type) {
+      case "country":
+        return ["name", "common"];
+      default:
+        return [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +66,16 @@ class LocationWidget extends StatelessWidget {
               ],
             );
           } else if (snapshot.hasError) {
-            return Text('Erro! ao carregar os estados');
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Text(getError())],
+                )
+              ],
+            );
+            ;
           } else {
             List<dynamic> country = [];
 
@@ -32,10 +83,20 @@ class LocationWidget extends StatelessWidget {
               country = jsonDecode(snapshot.data);
             }
 
-            return Filter(
-              list: country,
-              pathLabel: ["name", "common"],
-              pathId: ['name', 'common'],
+            return Column(
+              children: [
+                Text(
+                  getLabel(),
+                  textAlign: TextAlign.center,
+                ),
+                Expanded(
+                  child: Filter(
+                    list: country,
+                    pathLabel: getPathName(),
+                    pathId: getPathId(),
+                  ),
+                ),
+              ],
             );
           }
         });
