@@ -55,27 +55,21 @@ class _LocationWidget extends State<LocationWidget> {
     return FutureBuilder(
         future: locationService.getAllCountrys(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting || snapshot.hasError) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [CircularProgressIndicator()],
+                  children: [
+                    if(snapshot.hasError)
+                      Text(getError())
+                    else
+                      CircularProgressIndicator()
+                  ],
                 )
               ],
             );
-          } else if (snapshot.hasError) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Text(getError())],
-                )
-              ],
-            );
-            ;
           } else {
             List<dynamic> country = [];
 
