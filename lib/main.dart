@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/widgets/shared/filter.dart';
-import "service/location.service.dart";
-import 'dart:convert';
+import 'package:weather_app/widgets/location/main.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -34,15 +33,30 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Weather(),
+      home: WeatherApp(),
     );
   }
 }
 
-class Weather extends StatelessWidget {
-  Weather({super.key});
+class WeatherApp extends StatefulWidget {
+  const WeatherApp({ super.key });
 
-  LocationService locationService = LocationService();
+  @override
+  State<StatefulWidget> createState() => _WeatherApp();
+}
+
+class _WeatherApp extends State<WeatherApp> {
+
+  String step = "initial";
+
+  getWidget() {
+    switch(step) {
+      case "initial":
+        return LocationWidget();
+      default:
+        return Text("teste");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,34 +65,7 @@ class Weather extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Weather"),
       ),
-      body: FutureBuilder(
-          future: locationService.getAllCountrys(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [CircularProgressIndicator()],
-                  )
-                ],
-              );
-            } else if (snapshot.hasError) {
-              return Text('Erro! ao carregar os estados');
-            } else {
-              List<dynamic> country = [];
-
-              if (snapshot.data is String) {
-                country = jsonDecode(snapshot.data);
-              }
-
-              return Filter(
-                list: country,
-                path: ["name", "common"],
-              );
-            }
-          }),
+      body: getWidget()
     );
   }
 }

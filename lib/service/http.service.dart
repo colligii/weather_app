@@ -1,6 +1,8 @@
 import 'package:http/http.dart' as http;
 
 class HttpService {
+  const HttpService();
+
   Future<dynamic> get(String path) async {
     final response = await http.get(Uri.parse(path));
 

@@ -2,8 +2,9 @@ import "../environment.dart";
 import "http.service.dart";
 
 class LocationService {
+  const LocationService();
 
-  HttpService httpService = HttpService();
+  final HttpService httpService = const HttpService();
 
   Future<dynamic> getAllCountrys() async {
     return httpService.get("${Environment.restCountryUrl}/all");
