@@ -5,12 +5,14 @@ class Filter extends StatefulWidget {
   final List<dynamic> list;
   final List<String> pathLabel;
   final List<String> pathId;
+  final void Function(dynamic) nextStep;
 
   Filter({
     Key? key,
     required this.list,
     required this.pathLabel,
-    required this.pathId
+    required this.pathId,
+    required this.nextStep
   }) : super(key: key);
 
   @override
@@ -31,6 +33,7 @@ class _Filter extends State<Filter> {
     List<dynamic> list = widget.list;
     List<String> pathLabel = widget.pathLabel;
     List<String> pathId = widget.pathId;
+    void Function(dynamic) nextStep = widget.nextStep;
 
     return Column(
       children: [
@@ -52,7 +55,7 @@ class _Filter extends State<Filter> {
                   .map((dynamic country) => InkWell(
                 onTap: () {
                   // emit
-                  print(Shared.getNestedValue(country, pathId));
+                  nextStep(Shared.getNestedValue(country, pathId));
                 },
                 child: Padding(
                   padding: EdgeInsets.all(10),
