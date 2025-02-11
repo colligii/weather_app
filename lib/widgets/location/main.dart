@@ -123,7 +123,7 @@ class _LocationWidget extends State<LocationWidget> {
               }
             });
       default:
-        return Text("Erro na aplicação! $countryValue");
+        return Text("Erro na aplicação!");
     }
   }
 }
