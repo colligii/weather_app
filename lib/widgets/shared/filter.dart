@@ -22,14 +22,21 @@ class Filter extends StatefulWidget {
 class _Filter extends State<Filter> {
 
   String filter = "";
+  late List<dynamic> _listClone;
+
+  @override
+  void initState() {
+    super.initState();
+    _listClone = widget.list;
+  }
 
   bool matchesFilter(Map<String, dynamic> item, List<String> path) {
-    return filter.trim() == "" || "${Shared.getNestedValue(item, path)}".toUpperCase().trim().contains(filter.trim().toUpperCase());
+    return filter.trim() == "" ||
+        "${Shared.getNestedValue(item, path)}".toUpperCase().trim().contains(filter.trim().toUpperCase());
   }
 
   @override
   Widget build(BuildContext context) {
-
     List<dynamic> list = widget.list;
     List<String> pathLabel = widget.pathLabel;
     List<String> pathId = widget.pathId;
@@ -43,33 +50,37 @@ class _Filter extends State<Filter> {
             onChanged: (val) {
               setState(() {
                 filter = "$val";
+                _listClone = list
+                    .where((item) => matchesFilter(item, pathLabel))
+                    .toList();
               });
             },
+            decoration: InputDecoration(
+              hintText: 'Search...',
+              border: OutlineInputBorder(),
+            ),
           ),
         ),
         Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: list
-                  .where((item) => matchesFilter(item, pathLabel))
-                  .map((dynamic country) => InkWell(
+          child: ListView.builder(
+            itemCount: _listClone.length,
+            itemBuilder: (context, index) {
+              return InkWell(
                 onTap: () {
-                  // emit
-                  nextStep(Shared.getNestedValue(country, pathId));
+                  nextStep(Shared.getNestedValue(_listClone[index], pathId));
                 },
                 child: Padding(
                   padding: EdgeInsets.all(10),
                   child: Container(
                     width: double.infinity,
                     child: Text(
-                      "${Shared.getNestedValue(country, pathLabel)}",
+                      "${Shared.getNestedValue(_listClone[index], pathLabel)}",
                       textAlign: TextAlign.center,
                     ),
                   ),
                 ),
-              ))
-                  .toList(),
-            ),
+              );
+            },
           ),
         )
       ],
